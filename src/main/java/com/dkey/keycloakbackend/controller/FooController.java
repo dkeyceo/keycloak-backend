@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.security.RolesAllowed;
+
 @RestController
 @RequestMapping("/foo")
 @CrossOrigin
@@ -22,10 +24,13 @@ public class FooController {
                     .collect(Collectors.toList());
 
     @GetMapping("/list")
+    @RolesAllowed("backend-user")
     public ResponseEntity<List<Foo>> list(){
         return ResponseEntity.status(HttpStatus.OK).body(foos);
     }
+    
     @GetMapping("/detail/{id}")
+    @RolesAllowed("backend-user")
     public ResponseEntity<Foo> detail(@PathVariable int id){
         Foo foo = foos
                 .stream().filter(f -> f.getId() == id).findFirst().orElse(null);
@@ -33,6 +38,7 @@ public class FooController {
         return ResponseEntity.status(200).body(foo);
     }
     @PostMapping("/create")
+    @RolesAllowed("backend-admin")
     public ResponseEntity<?> create(@RequestBody Foo foo){
         int maxIndex = foos.stream().max(Comparator.comparing(m->m.getId())).get().getId();
         foo.setId(maxIndex + 1);
@@ -40,6 +46,7 @@ public class FooController {
         return ResponseEntity.status(201).body(new ResponseMessage("Created"));
     }
     @PutMapping("/update/{id}")
+    @RolesAllowed("backend-admin")
     public ResponseEntity<?> update(@PathVariable int id,@RequestBody Foo foo){
         Foo fooUpdate = foos.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
         fooUpdate.setName(foo.getName());
@@ -47,6 +54,7 @@ public class FooController {
         return ResponseEntity.status(200).body(new ResponseMessage("updated"));
     }
     @DeleteMapping("/delete/{id}")
+    @RolesAllowed("backend-admin")
     public ResponseEntity<?> delete(@PathVariable int id){
         Foo foo = foos.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
         foos.remove(foo);
