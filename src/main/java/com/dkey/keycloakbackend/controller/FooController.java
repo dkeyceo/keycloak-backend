@@ -50,7 +50,7 @@ public class FooController {
     public ResponseEntity<?> update(@PathVariable int id,@RequestBody Foo foo){
         Foo fooUpdate = foos.stream().filter(f -> f.getId() == id).findFirst().orElse(null);
         fooUpdate.setName(foo.getName());
-        foos.add(fooUpdate);
+//        foos.add(fooUpdate);
         return ResponseEntity.status(200).body(new ResponseMessage("updated"));
     }
     @DeleteMapping("/delete/{id}")
